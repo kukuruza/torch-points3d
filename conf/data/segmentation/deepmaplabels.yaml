@@ -1,0 +1,36 @@
+data:
+  task: segmentation
+  class: deepmaplabels.DeepmapLabelsDataset
+  dataroot: data
+  normal: True
+  train_size: 99 # Number of shapes in the whole training set
+  use_category: False
+  first_subsampling: 0.02
+  pre_transforms:
+    - transform: NormalizeScale
+    - transform: GridSampling3D
+      params:
+        size: ${data.first_subsampling}
+  train_transforms:
+    - transform: FixedPoints
+      lparams: [4096]
+    - transform: RandomNoise
+      params:
+        sigma: 0.01
+        clip: 0.05
+    - transform: RandomRotate
+      params:
+        degrees: 180
+        axis: 2
+    - transform: RandomScaleAnisotropic
+      params:
+        scales: [0.8, 1.2]
+    - transform: RandomSymmetry
+      params:
+        axis: [True, False, False]
+    - transform: Center
+  test_transforms:
+    - transform: FixedPoints
+      lparams: [4096]
+    - transform: Center
+  val_transforms: ${data.test_transforms}
