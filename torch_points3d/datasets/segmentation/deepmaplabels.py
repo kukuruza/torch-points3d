@@ -28,9 +28,8 @@ class DeepmapLabels(InMemoryDataset):
 
     @property
     def raw_file_names(self):
-        path = osp.join(
-            os.getcwd(),
-            'torch_points3d/datasets/segmentation/deepmaplabels.txt')
+        path = osp.join(osp.dirname(osp.abspath(__file__)),
+                        'deepmaplabels.txt')
         with open(path) as f:
             file_names = f.read().splitlines()
         assert len(file_names) == 99
@@ -65,7 +64,7 @@ class DeepmapLabels(InMemoryDataset):
             for point in labels.points:
                 pos.append([point.x, point.y, point.z])
                 assert point.label in label_idx
-                y.append(point.label)
+                y.append(label_idx[point.label])
             pos = torch.tensor(pos)
             y = torch.tensor(y).type(torch.long)
             data = Data(pos=pos, y=y)
